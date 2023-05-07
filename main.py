@@ -4,9 +4,11 @@ from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
 from dotenv import load_dotenv
-
+import schedule
+import time
 
 disable_warnings(InsecureRequestWarning)
+
 
 # LINEにバス時刻表のPDFのリンクを送信
 def send_pdf_link(file_url, line_notify_token):
@@ -34,6 +36,7 @@ def download_pdf_file(file_url, file_path, line_notify_token):
     except Exception as e:
         print(f"Error downloading {os.path.basename(file_path)}: {str(e)}")
         return False
+
 
 # downlaodディレクトリが存在しなかったら作成する
 def download_dir_exit(download_dir):
@@ -64,5 +67,10 @@ def main():
             successful_downloads += 1
     # print(f"{successful_downloads} PDF files downloaded successfully!")
 
+
 if __name__ == '__main__':
-    main()
+    schedule.every().monday.at("10:00").do(main)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+#     main()
